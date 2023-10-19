@@ -22,4 +22,24 @@ class OrderItemRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, OrderItem::class);
     }
+
+    public function add(OrderItem $entity, bool $flush = false): void
+    {
+        $entityManager = $this->getEntityManager();
+        $entityManager->persist($entity);
+
+        if ($flush) {
+            $entityManager->flush();
+        }
+    }
+
+    public function remove(OrderItem $entity, bool $flush = false): void
+    {
+        $entityManager = $this->getEntityManager();
+        $entityManager->remove($entity);
+
+        if ($flush) {
+            $entityManager->flush();
+        }
+    }
 }

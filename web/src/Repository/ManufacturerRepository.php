@@ -22,4 +22,31 @@ class ManufacturerRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Manufacturer::class);
     }
+
+    public function add(Manufacturer $entity, bool $flush = false): void
+    {
+        $entityManager = $this->getEntityManager();
+        $entityManager->persist($entity);
+
+        if ($flush) {
+            $entityManager->flush();
+        }
+    }
+
+    public function remove(Manufacturer $entity, bool $flush = false): void
+    {
+        $entityManager = $this->getEntityManager();
+        $entityManager->remove($entity);
+
+        if ($flush) {
+            $entityManager->flush();
+        }
+    }
+
+    public function findOneByTaxId(string $taxId): ?Manufacturer
+    {
+        return $this->findOneBy([
+            'taxId' => $taxId
+        ]);
+    }
 }

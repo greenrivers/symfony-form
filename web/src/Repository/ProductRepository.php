@@ -22,4 +22,31 @@ class ProductRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Product::class);
     }
+
+    public function add(Product $entity, bool $flush = false): void
+    {
+        $entityManager = $this->getEntityManager();
+        $entityManager->persist($entity);
+
+        if ($flush) {
+            $entityManager->flush();
+        }
+    }
+
+    public function remove(Product $entity, bool $flush = false): void
+    {
+        $entityManager = $this->getEntityManager();
+        $entityManager->remove($entity);
+
+        if ($flush) {
+            $entityManager->flush();
+        }
+    }
+
+    public function findOneByName(string $name): ?Product
+    {
+        return $this->findOneBy([
+            'name' => $name
+        ]);
+    }
 }
