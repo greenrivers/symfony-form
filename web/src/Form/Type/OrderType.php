@@ -28,8 +28,7 @@ class OrderType extends AbstractType
                     'products' => $products
                 ],
                 'allow_add' => true,
-                'allow_delete' => true,
-                'label' => false
+                'allow_delete' => true
             ])
             ->add('submit', SubmitType::class);
     }

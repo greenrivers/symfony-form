@@ -49,7 +49,7 @@ class OrderController extends AbstractController
         ]);
     }
 
-    #[Route('/success', name: self::ORDER_SUCCESS_ROUTE, methods: [Request::METHOD_POST])]
+    #[Route('/success', name: self::ORDER_SUCCESS_ROUTE, methods: [Request::METHOD_GET])]
     public function orderSuccess(Request $request): Response
     {
         return $this->render('order/success.html.twig', [
