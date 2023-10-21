@@ -6,6 +6,7 @@ namespace App\Repository;
 
 use App\Entity\Category;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -41,6 +42,13 @@ class CategoryRepository extends ServiceEntityRepository
         if ($flush) {
             $entityManager->flush();
         }
+    }
+
+    public function findFirst(): ?Category
+    {
+        return $this->findOneBy([], [
+            'id' => Criteria::ASC
+        ]);
     }
 
     public function findOneByName(string $name): ?Category

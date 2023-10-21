@@ -26,6 +26,16 @@ class CategoryService
         $this->categoryRepository->add($category, true);
     }
 
+    public function getFirstCategory(): ?Category
+    {
+        return $this->categoryRepository->findFirst();
+    }
+
+    public function getCategoryById(int $id): ?Category
+    {
+        return $this->categoryRepository->find($id);
+    }
+
     public function getCategoryByName(string $name): ?Category
     {
         return $this->categoryRepository->findOneByName($name);

@@ -1,0 +1,110 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    {{ form_start(form) }}
+    <div class="my-custom-class-for-errors">
+        {{ form_errors(form) }}
+    </div>
+
+    <div class="row">
+        <div class="col">
+            {{ form_row(form.customer.email) }}
+        </div>
+        <div class="col">
+            {{ form_row(form.category.name, {
+                attr: {
+                    'data-product-url': path('order_form_products'),
+                    'class': 'js-form-category'
+                }
+            }) }}
+        </div>
+        <div class="col">
+            <h3>Products</h3>
+            <ul class="order_items"
+                data-index="{{ form.orderItems|length > 0 ? form.orderItems|last.vars.name + 1 : 0 }}"
+                data-prototype="{{ form_widget(form.orderItems.vars.prototype)|e('html_attr') }}"
+            ></ul>
+            <button type="button" class="add_order_item" data-collection-holder-class="order_items">Add a product
+            </button>
+        </div>
+        <div class="col">
+            {{ form_row(form.submit) }}
+        </div>
+    </div>
+    {{ form_end(form) }}
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+            integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+        const addTagFormDeleteLink = (item) => {
+            const removeFormButton = document.createElement('button');
+            removeFormButton.innerText = 'Delete this orderItem';
+
+            item.append(removeFormButton);
+
+            removeFormButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                item.remove();
+            });
+        }
+
+        const addFormToCollection = (e) => {
+            const collectionHolder = document.querySelector('.' + e.currentTarget.dataset.collectionHolderClass);
+            const item = document.createElement('li');
+
+            item.innerHTML = collectionHolder
+                .dataset
+                .prototype
+                .replace(
+                    /__name__/g,
+                    collectionHolder.dataset.index
+                );
+
+            collectionHolder.appendChild(item);
+            collectionHolder.dataset.index++;
+
+            addTagFormDeleteLink(item);
+        };
+
+        document
+            .querySelectorAll('.add_order_item')
+            .forEach(btn => {
+                btn.addEventListener('click', addFormToCollection)
+            });
+
+        document
+            .querySelectorAll('ul.tags li')
+            .forEach((orderItem) => {
+                addTagFormDeleteLink(orderItem)
+            });
+
+        // Products load depend on category
+        $(document).ready(() => {
+            const $categorySelect = $('.js-form-category');
+
+            $categorySelect.on('change', function (e) {
+                $.ajax({
+                    url: $categorySelect.data('product-url'),
+                    data: {
+                        categoryId: $categorySelect.val()
+                    },
+                    success: function (html) {
+                        const $productTarget = $('.product');
+
+                        if (!html) {
+                            $productTarget.find('select').remove();
+                            $productTarget.addClass('d-none');
+                            return;
+                        }
+                        // Replace the current field and show
+                        $productTarget
+                            .html(html)
+                            .removeClass('d-none')
+
+                        $('.order_items').attr('data-prototype', html);
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}
