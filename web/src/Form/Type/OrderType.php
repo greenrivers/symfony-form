@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Form\Type;
 
-use App\Entity\Order;
+use App\Dto\OrderDto;
 use App\Form\Type\Order\CategoryType;
 use App\Form\Type\Order\CustomerType;
 use App\Form\Type\Order\OrderItemType;
@@ -31,9 +31,7 @@ class OrderType extends AbstractType
 
         $builder
             ->add('customer', CustomerType::class)
-            ->add('category', CategoryType::class, [
-                'mapped' => false
-            ])
+            ->add('category', CategoryType::class)
             ->add('submit', SubmitType::class);
 
         $this->addOrderItems($builder, $products);
@@ -55,7 +53,7 @@ class OrderType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => Order::class,
+            'data_class' => OrderDto::class,
             'products' => []
         ]);
     }

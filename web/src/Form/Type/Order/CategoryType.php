@@ -28,7 +28,7 @@ class CategoryType extends AbstractType
             ->setDataMapper($this->categoryDataMapper);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Category::class

@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Entity\Order;
+use App\Dto\OrderDto;
+use App\Entity\Customer;
 use App\Entity\OrderItem;
 use App\Form\Type\Order\OrderItemType;
 use App\Form\Type\OrderType;
-use App\Repository\CustomerRepository;
 use App\Service\CategoryService;
 use App\Service\OrderService;
 use DateTimeImmutable;
@@ -26,15 +26,16 @@ class OrderController extends AbstractController
     public const ORDER_FORM_PRODUCTS_ROUTE = 'order_form_products';
 
     #[Route('/', name: self::ORDER_FORM_ROUTE, methods: [Request::METHOD_GET, Request::METHOD_POST])]
-    public function orderForm(Request $request, CategoryService $categoryService, OrderService $orderService, CustomerRepository $customerRepository): Response
+    public function orderForm(Request $request, CategoryService $categoryService, OrderService $orderService): Response
     {
-        $order = new Order();
-        $order->setDateTime(new DateTimeImmutable());
+        $dateTime = new DateTimeImmutable();
+        $customer = new Customer();
         $category = $categoryService->getFirstCategory();
         $products = $category?->getProducts();
+        $orderDto = new OrderDto($dateTime, $customer, $category, []);
         $form = $this->createForm(
             OrderType::class,
-            $order,
+            $orderDto,
             [
                 'products' => $products
             ]
@@ -43,10 +44,8 @@ class OrderController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $order = $form->getData();
-            $category = $form->get('category')->get('name')->getData();
 
             dump($order);
-            dump($category);
             exit();
 
 //            $orderService->saveOrder($order);
