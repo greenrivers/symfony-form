@@ -17,6 +17,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/order')]
@@ -36,6 +37,11 @@ class OrderController extends AbstractController
         $customer = new Customer();
         $category = $categoryService->getFirstCategory();
         $products = $category?->getProducts();
+
+        if (!$category) {
+            throw new NotFoundHttpException('Category not found');
+        }
+
         $orderDto = new OrderDto($dateTime, $customer, new ArrayCollection(), $category);
         $form = $this->createForm(
             OrderType::class,
@@ -49,6 +55,7 @@ class OrderController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var OrderDto $orderDto */
             $orderDto = $form->getData();
+
             $order = $orderService->createOrder($orderDto);
             $orderService->saveOrder($order);
 
@@ -70,6 +77,7 @@ class OrderController extends AbstractController
         $orderItem = new OrderItem();
         $category = $categoryService->getCategoryById((int)$categoryId);
         $products = $category?->getProducts();
+
         $form = $this->createForm(
             OrderItemType::class,
             $orderItem,
