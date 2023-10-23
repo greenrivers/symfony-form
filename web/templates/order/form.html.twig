@@ -1,6 +1,12 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">
+            {{ message }}
+        </div>
+    {% endfor %}
+
     <div class="container mt-5">
         {{ form_start(form, {attr: {class: 'col-lg-4 offset-lg-4'}}) }}
         <div class="form-group row">
@@ -14,7 +20,7 @@
         <div class="form-group row">
             {{ form_row(form.category.name, {
                 attr: {
-                    'data-products-url': path('order_form_products'),
+                    'data-products-url': path('order_products'),
                     'class': 'order-category'
                 }
             }) }}

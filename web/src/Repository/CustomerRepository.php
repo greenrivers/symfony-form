@@ -42,4 +42,11 @@ class CustomerRepository extends ServiceEntityRepository
             $entityManager->flush();
         }
     }
+
+    public function findOneByEmail(string $email): ?Customer
+    {
+        return $this->findOneBy([
+            'email' => $email
+        ]);
+    }
 }

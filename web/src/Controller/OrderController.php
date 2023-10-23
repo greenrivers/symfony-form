@@ -12,6 +12,7 @@ use App\Form\Type\OrderType;
 use App\Service\CategoryService;
 use App\Service\OrderService;
 use DateTimeImmutable;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,18 +22,21 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/order')]
 class OrderController extends AbstractController
 {
-    public const ORDER_FORM_ROUTE = 'order_form';
-    public const ORDER_SUCCESS_ROUTE = 'order_success';
-    public const ORDER_FORM_PRODUCTS_ROUTE = 'order_form_products';
+    public const ORDER_ROUTE = 'order';
+    public const ORDER_PRODUCTS_ROUTE = 'order_products';
 
-    #[Route('/', name: self::ORDER_FORM_ROUTE, methods: [Request::METHOD_GET, Request::METHOD_POST])]
-    public function orderForm(Request $request, CategoryService $categoryService, OrderService $orderService): Response
+    #[Route('/', name: self::ORDER_ROUTE, methods: [Request::METHOD_GET, Request::METHOD_POST])]
+    public function order(
+        Request         $request,
+        CategoryService $categoryService,
+        OrderService    $orderService
+    ): Response
     {
         $dateTime = new DateTimeImmutable();
         $customer = new Customer();
         $category = $categoryService->getFirstCategory();
         $products = $category?->getProducts();
-        $orderDto = new OrderDto($dateTime, $customer, $category, []);
+        $orderDto = new OrderDto($dateTime, $customer, new ArrayCollection(), $category);
         $form = $this->createForm(
             OrderType::class,
             $orderDto,
@@ -43,15 +47,13 @@ class OrderController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $order = $form->getData();
+            /** @var OrderDto $orderDto */
+            $orderDto = $form->getData();
+            $order = $orderService->createOrder($orderDto);
+            $orderService->saveOrder($order);
 
-            dump($order);
-            exit();
-
-//            $orderService->saveOrder($order);
-
-            $this->addFlash('success', 'Order saved');
-            return $this->redirectToRoute(self::ORDER_SUCCESS_ROUTE);
+            $this->addFlash('success', 'Order saved!');
+            return $this->redirect($request->getUri());
         }
 
         return $this->render('order/form.html.twig', [
@@ -59,14 +61,11 @@ class OrderController extends AbstractController
         ]);
     }
 
-    #[Route('/success', name: self::ORDER_SUCCESS_ROUTE, methods: [Request::METHOD_GET])]
-    public function orderSuccess(): Response
-    {
-        return $this->render('order/success.html.twig');
-    }
-
-    #[Route('/products', name: self::ORDER_FORM_PRODUCTS_ROUTE, methods: [Request::METHOD_GET])]
-    public function getProducts(#[MapQueryParameter] string $categoryId, CategoryService $categoryService): Response
+    #[Route('/products', name: self::ORDER_PRODUCTS_ROUTE, methods: [Request::METHOD_GET])]
+    public function getProducts(
+        #[MapQueryParameter] string $categoryId,
+        CategoryService             $categoryService
+    ): Response
     {
         $orderItem = new OrderItem();
         $category = $categoryService->getCategoryById((int)$categoryId);

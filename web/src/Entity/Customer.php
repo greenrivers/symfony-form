@@ -8,9 +8,11 @@ use App\Repository\CustomerRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CustomerRepository::class)]
+#[UniqueEntity('email')]
 class Customer
 {
     #[ORM\Id]
@@ -18,7 +20,7 @@ class Customer
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 128)]
+    #[ORM\Column(length: 128, unique: true)]
     #[Assert\NotBlank]
     #[Assert\Unique]
     #[Assert\Email]

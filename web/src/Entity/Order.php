@@ -27,11 +27,11 @@ class Order
     #[Assert\Type(DateTimeInterface::class)]
     private DateTimeImmutable $dateTime;
 
-    #[ORM\ManyToOne(inversedBy: 'orders')]
+    #[ORM\ManyToOne(cascade: ['persist'], inversedBy: 'orders')]
     #[ORM\JoinColumn(nullable: false)]
     private Customer $customer;
 
-    #[ORM\OneToMany(mappedBy: 'order', targetEntity: OrderItem::class)]
+    #[ORM\OneToMany(mappedBy: 'order', targetEntity: OrderItem::class, cascade: ['persist'])]
     private Collection $orderItems;
 
     public function __construct()
