@@ -63,7 +63,7 @@ class OrderItem
         return $this->product;
     }
 
-    public function setProductId(Product $product): static
+    public function setProduct(Product $product): static
     {
         $this->product = $product;
 

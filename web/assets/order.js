@@ -3,6 +3,7 @@ import $ from 'jquery';
 export const order = () => {
     const categorySelect = $('.order-category');
     const orderItemAddButton = $('.add-order-item');
+    const orderItemRemoveButton = $('.remove-order-item');
 
     const addFormDeleteLink = (item) => {
         const removeFormButton = $('<button>')
@@ -11,32 +12,41 @@ export const order = () => {
 
         item.append(removeFormButton);
 
-        removeFormButton.on('click', (event) => {
-            event.preventDefault();
-            item.remove();
-        });
+        removeFormButton.on('click', removeFormFromCollection);
     }
 
     const addFormToCollection = (event) => {
         const {collectionHolderClass} = event.currentTarget.dataset;
         const collectionHolder = $(`.${collectionHolderClass}`);
         const item = $('<li>');
-
         item.html(
             collectionHolder
                 .data('prototype')
                 .replace(/__name__/g, collectionHolder.data('index'))
         );
 
+        const index = collectionHolder.data('index');
         collectionHolder.append(item);
-        collectionHolder.data('index', collectionHolder.data('index') + 1);
+        collectionHolder.data('index', index + 1);
+
+        const productSelect = item.find('select');
+        const quantityInput = item.find('input');
+        productSelect.prop('name', `order[orderItems][${index}][product]`);
+        quantityInput.prop('name', `order[orderItems][${index}][quantity]`);
 
         addFormDeleteLink(item);
     };
 
-    orderItemAddButton.each((i, button) => {
-        $(button).on('click', addFormToCollection);
-    });
+    const removeFormFromCollection = (event) => {
+        const button = event.currentTarget;
+        const item = button.closest('li');
+
+        event.preventDefault();
+        item.remove();
+    }
+
+    orderItemAddButton.on('click', addFormToCollection);
+    orderItemRemoveButton.on('click', removeFormFromCollection);
 
     categorySelect.on('change', (event) => {
         $.ajax({
@@ -45,6 +55,7 @@ export const order = () => {
                 categoryId: categorySelect.val()
             },
             success: (html) => {
+                const orderItems = $('.order-items');
                 const productSelect = $('.order-item-product');
 
                 if (!html) {
@@ -58,7 +69,7 @@ export const order = () => {
                     .html(html)
                     .removeClass('d-none');
 
-                $('.order-items').data('prototype', html);
+                orderItems.data('prototype', html);
             }
         });
     });

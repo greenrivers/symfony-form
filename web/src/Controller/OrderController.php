@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Entity\Order;
 use App\Entity\OrderItem;
 use App\Form\Type\Order\OrderItemType;
 use App\Form\Type\OrderType;
+use App\Repository\CustomerRepository;
 use App\Service\CategoryService;
+use App\Service\OrderService;
+use DateTimeImmutable;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,14 +25,16 @@ class OrderController extends AbstractController
     public const ORDER_SUCCESS_ROUTE = 'order_success';
     public const ORDER_FORM_PRODUCTS_ROUTE = 'order_form_products';
 
-    #[Route('/form', name: self::ORDER_FORM_ROUTE, methods: [Request::METHOD_GET, Request::METHOD_POST])]
-    public function orderForm(Request $request, CategoryService $categoryService): Response
+    #[Route('/', name: self::ORDER_FORM_ROUTE, methods: [Request::METHOD_GET, Request::METHOD_POST])]
+    public function orderForm(Request $request, CategoryService $categoryService, OrderService $orderService, CustomerRepository $customerRepository): Response
     {
+        $order = new Order();
+        $order->setDateTime(new DateTimeImmutable());
         $category = $categoryService->getFirstCategory();
         $products = $category?->getProducts();
         $form = $this->createForm(
             OrderType::class,
-            null,
+            $order,
             [
                 'products' => $products
             ]
@@ -37,10 +43,15 @@ class OrderController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $order = $form->getData();
+            $category = $form->get('category')->get('name')->getData();
 
-            // TODO: save entities
+            dump($order);
+            dump($category);
+            exit();
 
-            $this->addFlash('success', 'Article créé avec succès !');
+//            $orderService->saveOrder($order);
+
+            $this->addFlash('success', 'Order saved');
             return $this->redirectToRoute(self::ORDER_SUCCESS_ROUTE);
         }
 
@@ -50,10 +61,9 @@ class OrderController extends AbstractController
     }
 
     #[Route('/success', name: self::ORDER_SUCCESS_ROUTE, methods: [Request::METHOD_GET])]
-    public function orderSuccess(Request $request): Response
+    public function orderSuccess(): Response
     {
-        return $this->render('order/success.html.twig', [
-        ]);
+        return $this->render('order/success.html.twig');
     }
 
     #[Route('/products', name: self::ORDER_FORM_PRODUCTS_ROUTE, methods: [Request::METHOD_GET])]

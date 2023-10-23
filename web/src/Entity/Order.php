@@ -6,6 +6,7 @@ namespace App\Entity;
 
 use App\Repository\OrderRepository;
 use DateTimeImmutable;
+use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -23,15 +24,15 @@ class Order
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     #[Assert\NotBlank]
-    #[Assert\DateTime]
+    #[Assert\Type(DateTimeInterface::class)]
     private DateTimeImmutable $dateTime;
+
+    #[ORM\ManyToOne(inversedBy: 'orders')]
+    #[ORM\JoinColumn(nullable: false)]
+    private Customer $customer;
 
     #[ORM\OneToMany(mappedBy: 'order', targetEntity: OrderItem::class)]
     private Collection $orderItems;
-
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: false)]
-    private Customer $customer;
 
     public function __construct()
     {
@@ -55,6 +56,18 @@ class Order
         return $this;
     }
 
+    public function getCustomer(): Customer
+    {
+        return $this->customer;
+    }
+
+    public function setCustomer(Customer $customer): static
+    {
+        $this->customer = $customer;
+
+        return $this;
+    }
+
     /**
      * @return Collection<int, OrderItem>
      */
@@ -67,7 +80,7 @@ class Order
     {
         if (!$this->orderItems->contains($orderItem)) {
             $this->orderItems->add($orderItem);
-            $orderItem->setOrderId($this);
+            $orderItem->setOrder($this);
         }
 
         return $this;
@@ -77,22 +90,10 @@ class Order
     {
         if ($this->orderItems->removeElement($orderItem)) {
             // set the owning side to null (unless already changed)
-            if ($orderItem->getOrderId() === $this) {
-                $orderItem->setOrderId(null);
+            if ($orderItem->getOrder() === $this) {
+                $orderItem->setOrder(null);
             }
         }
-
-        return $this;
-    }
-
-    public function getCustomer(): Customer
-    {
-        return $this->customer;
-    }
-
-    public function setCustomer(Customer $customer): static
-    {
-        $this->customer = $customer;
 
         return $this;
     }
