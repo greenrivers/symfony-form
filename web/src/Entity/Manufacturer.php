@@ -11,29 +11,39 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\Embedded;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ManufacturerRepository::class)]
-#[ApiResource(security: "is_granted('ROLE_ADMIN')")]
+#[ApiResource(
+    normalizationContext: ['groups' => ['manufacturer_read']],
+    denormalizationContext: ['groups' => ['manufacturer_write']],
+    security: "is_granted('ROLE_ADMIN')"
+)]
 class Manufacturer
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['manufacturer_read', 'product_read', 'product_write'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
+    #[Groups(['manufacturer_read', 'manufacturer_write', 'product_read'])]
     private string $company;
 
     #[ORM\Column(length: 16)]
     #[Assert\NotBlank]
+    #[Groups(['manufacturer_read', 'manufacturer_write', 'product_read'])]
     private string $taxId;
 
     #[Embedded(class: Address::class)]
+    #[Groups(['manufacturer_read', 'manufacturer_write'])]
     private Address $address;
 
     #[ORM\OneToMany(mappedBy: 'manufacturer', targetEntity: Product::class)]
+    #[Groups('manufacturer_read')]
     private Collection $products;
 
     public function __construct()

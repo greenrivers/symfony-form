@@ -9,22 +9,30 @@ use App\Repository\CategoryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
-#[ApiResource(security: "is_granted('ROLE_ADMIN')")]
+#[ApiResource(
+    normalizationContext: ['groups' => ['category_read']],
+    denormalizationContext: ['groups' => ['category_write']],
+    security: "is_granted('ROLE_ADMIN')"
+)]
 class Category
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['category_read', 'product_read', 'product_write'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 128)]
     #[Assert\NotBlank]
+    #[Groups(['category_read', 'category_write', 'product_read'])]
     private string $name;
 
     #[ORM\OneToMany(mappedBy: 'category', targetEntity: Product::class)]
+    #[Groups('category_read')]
     private Collection $products;
 
     public function __construct()

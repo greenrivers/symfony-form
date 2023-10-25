@@ -10,35 +10,46 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
-#[ApiResource(security: "is_granted('ROLE_ADMIN')")]
+#[ApiResource(
+    normalizationContext: ['groups' => ['product_read']],
+    denormalizationContext: ['groups' => ['product_write']],
+    security: "is_granted('ROLE_ADMIN')"
+)]
 class Product
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['product_read', 'category_read', 'manufacturer_read', 'manufacturer_write', 'order_item_read', 'order_item_write'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
+    #[Groups(['product_read', 'product_write', 'category_read', 'manufacturer_read', 'order_item_read'])]
     private string $name;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
     #[Assert\NotBlank]
     #[Assert\Positive]
+    #[Groups(['product_read', 'product_write', 'category_read', 'manufacturer_read', 'order_item_read'])]
     private string $price;
 
     #[ORM\ManyToOne(inversedBy: 'products')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['product_read', 'product_write'])]
     private Category $category;
 
     #[ORM\ManyToOne(inversedBy: 'products')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['product_read', 'product_write'])]
     private Manufacturer $manufacturer;
 
     #[ORM\OneToMany(mappedBy: 'product', targetEntity: OrderItem::class)]
+    #[Groups(['product_read'])]
     private Collection $orderItems;
 
     public function __construct()
