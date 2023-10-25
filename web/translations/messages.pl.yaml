@@ -1,0 +1,13 @@
+order:
+  message: Zamówienie zapisane!
+products: Produkty
+product:
+  add: Dodaj produkt
+  remove: Usuń produkt
+customer:
+  email: Email klienta
+category: Kategoria
+order_item:
+  product: Product
+  quantity: Ilość
+submit: Zatwierdź

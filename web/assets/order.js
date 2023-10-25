@@ -6,8 +6,9 @@ export const order = () => {
     const orderItemRemoveButton = $('.remove-order-item');
 
     const addFormDeleteLink = (item) => {
+        const buttonText = item.closest('ul').data('remove-order-item');
         const removeFormButton = $('<button>')
-            .text('Remove product')
+            .text(buttonText)
             .addClass('btn btn-danger col-6');
 
         item.append(removeFormButton);

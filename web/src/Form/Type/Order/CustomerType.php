@@ -17,7 +17,7 @@ class CustomerType extends AbstractType
         $builder
             ->add('email', EmailType::class, [
                 'required' => true,
-                'label' => 'Customer email'
+                'label' => 'customer.email'
             ]);
     }
 

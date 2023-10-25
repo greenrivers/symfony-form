@@ -20,7 +20,7 @@ use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route('/order')]
+#[Route(['/{_locale}/order', '/order'])]
 class OrderController extends AbstractController
 {
     public const ORDER_ROUTE = 'order';
@@ -59,7 +59,7 @@ class OrderController extends AbstractController
             $order = $orderService->createOrder($orderDto);
             $orderService->saveOrder($order);
 
-            $this->addFlash('success', 'Order saved!');
+            $this->addFlash('success', 'order.message');
             return $this->redirect($request->getUri());
         }
 

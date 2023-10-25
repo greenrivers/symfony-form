@@ -32,7 +32,9 @@ class OrderType extends AbstractType
         $builder
             ->add('customer', CustomerType::class)
             ->add('category', CategoryType::class)
-            ->add('submit', SubmitType::class);
+            ->add('submit', SubmitType::class, [
+                'label' => 'submit'
+            ]);
 
         $this->addOrderItems($builder, $products);
 

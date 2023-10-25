@@ -23,11 +23,14 @@ class OrderItemType extends AbstractType
                 'class' => Product::class,
                 'choices' => $products,
                 'choice_label' => fn(Product $product) => $product->getName() . ' => ' . $product->getPrice(),
+                'label' => 'order_item.product',
                 'attr' => [
                     'class' => 'order-item-product'
                 ]
             ])
-            ->add('quantity', NumberType::class);
+            ->add('quantity', NumberType::class, [
+                'label' => 'order_item.quantity'
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

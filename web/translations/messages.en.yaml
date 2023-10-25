@@ -1,0 +1,13 @@
+order:
+  message: Order saved!
+products: Products
+product:
+  add: Add a product
+  remove: Remove product
+customer:
+  email: Customer email
+category: Category
+order_item:
+  product: Product
+  quantity: Quantity
+submit: Submit

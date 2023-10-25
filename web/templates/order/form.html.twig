@@ -3,7 +3,7 @@
 {% block body %}
     {% for message in app.flashes('success') %}
         <div class="alert alert-success">
-            {{ message }}
+            {{ message|trans }}
         </div>
     {% endfor %}
 
@@ -26,10 +26,11 @@
             }) }}
         </div>
         <div class="form-group row">
-            <h4>Products</h4>
+            <h4>{{ 'products'|trans }}</h4>
             <ul class="order-items"
                 data-index="{{ form.orderItems|length > 0 ? form.orderItems|last.vars.name + 1 : 0 }}"
                 data-prototype="{{ form_widget(form.orderItems.vars.prototype)|e('html_attr') }}"
+                data-remove-order-item="{{ 'product.remove'|trans }}"
             >
                 {% for orderItem in form.orderItems %}
                     <li>
@@ -37,7 +38,7 @@
                         {{ form_row(orderItem.product) }}
                         {{ form_row(orderItem.quantity) }}
                         <button type="button" class="remove-order-item btn btn-danger col-6">
-                            Remove product
+                            {{ 'product.remove'|trans }}
                         </button>
                     </li>
                 {% endfor %}
@@ -47,7 +48,7 @@
             <div class="mb-3">
                 <button type="button" class="add-order-item btn btn-success col-6"
                         data-collection-holder-class="order-items">
-                    Add a product
+                    {{ 'product.add'|trans }}
                 </button>
             </div>
         </div>
