@@ -7,6 +7,7 @@ namespace App\Service;
 use LimitIterator;
 use SplFileObject;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Filesystem\Path;
 
 class FileService
 {
@@ -21,7 +22,7 @@ class FileService
 
     public function checkExtension(string $filePath, string $extension): bool
     {
-        return pathinfo($filePath, PATHINFO_EXTENSION) === $extension;
+        return Path::hasExtension($filePath, $extension);
     }
 
     public function getCsvFile(string $filePath): SplFileObject
@@ -40,7 +41,7 @@ class FileService
     public function getNumberOfRows(SplFileObject $file): int
     {
         $file->seek(PHP_INT_MAX);
-        return $file->key();
+        return $file->key() + 1;
     }
 
     public function getReader(SplFileObject $file, int $offset = 1): LimitIterator

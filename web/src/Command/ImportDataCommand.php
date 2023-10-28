@@ -59,7 +59,8 @@ class ImportDataCommand extends Command
             $reader = $this->fileService->getReader($file);
             $numberOfRows = $this->fileService->getNumberOfRows($file);
 
-            $progressBar = new ProgressBar($output, $numberOfRows - 1);
+            // exclude first row & last, empty line
+            $progressBar = new ProgressBar($output, $numberOfRows - 2);
             $progressBar->start();
 
             foreach ($reader as $row) {
