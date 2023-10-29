@@ -10,6 +10,7 @@ Local environment based on Warden.
 - PHP 8.1
 - PHPUnit 9
 - Symfony 6.3
+- API Platform 3.2
 - MariaDB 10.6
 - RabbitMQ 3.11
 
