@@ -43,7 +43,7 @@ php bin/console messenger:consume async
 
 Place an order from: https://app.symfony.test/order.
 
-API Platform endpoints: https://app.symfony.test/api.
+API Platform endpoints (auth based on USER_IDENTIFIER env): https://app.symfony.test/api.
 
 ### Tests
 
