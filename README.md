@@ -2,7 +2,12 @@
 
 ### Info
 
-Example Symfony project (import data from csv, use messenger, build form, api platform endpoints).<br/>
+Example Symfony project:
+- import data from csv
+- use messenger to process rows from csv
+- build form based on imported data
+- create api platform endpoints
+
 Local environment based on Warden.
 
 ### Environment
