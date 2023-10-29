@@ -14,6 +14,7 @@ use Doctrine\ORM\Tools\SchemaTool;
 use Liip\TestFixturesBundle\Services\DatabaseToolCollection;
 use Liip\TestFixturesBundle\Services\DatabaseTools\AbstractDatabaseTool;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Request;
 
 class OrderControllerTest extends WebTestCase
 {
@@ -49,7 +50,7 @@ class OrderControllerTest extends WebTestCase
     {
         $this->databaseTool->loadFixtures([ProductFixtures::class]);
 
-        $crawler = $this->client->request('GET', '/order/');
+        $crawler = $this->client->request(Request::METHOD_GET, '/order');
         $form = $crawler->selectButton('Submit')->form();
 
         $values = $form->getPhpValues();

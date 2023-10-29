@@ -97,6 +97,7 @@ class OrderServiceTest extends KernelTestCase
         $dateTime = new DateTimeImmutable();
         $customer = $this->entityManager->getRepository(Customer::class)
             ->findOneBy(['email' => 'test@email.com']);
+        /** @var Product[] $products */
         $products = $this->entityManager->getRepository(Product::class)
             ->createQueryBuilder('p')
             ->join('p.category', 'c')

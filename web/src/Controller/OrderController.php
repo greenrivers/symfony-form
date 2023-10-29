@@ -26,7 +26,7 @@ class OrderController extends AbstractController
     public const ORDER_ROUTE = 'order';
     public const ORDER_PRODUCTS_ROUTE = 'order_products';
 
-    #[Route('/', name: self::ORDER_ROUTE, methods: [Request::METHOD_GET, Request::METHOD_POST])]
+    #[Route(name: self::ORDER_ROUTE, methods: [Request::METHOD_GET, Request::METHOD_POST])]
     public function order(
         Request         $request,
         CategoryService $categoryService,
@@ -69,7 +69,7 @@ class OrderController extends AbstractController
     }
 
     #[Route('/products', name: self::ORDER_PRODUCTS_ROUTE, methods: [Request::METHOD_GET])]
-    public function getProducts(
+    public function products(
         #[MapQueryParameter] string $categoryId,
         CategoryService             $categoryService
     ): Response
