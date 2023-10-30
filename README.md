@@ -8,7 +8,8 @@ Example Symfony project:
 - build form based on imported data
 - create api platform endpoints
 
-Local environment based on Warden.
+Local environment based on Warden.<br/>
+Test env: https://symfony-form.greenrivers.pl/order.
 
 ### Environment
 
